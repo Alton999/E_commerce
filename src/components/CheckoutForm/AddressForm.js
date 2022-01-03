@@ -26,17 +26,28 @@ const AddressForm = ({checkoutToken}) => {
 	const methods = useForm();
 
 	const countries = Object.entries(shippingCountries).map(([code, name]) => ({id: code, label: name}));
+	const subdivision = Object.entries(shippingSubdivision).map(([code, name]) => ({id: code, label: name}));
 
 	const fetchShippingCountries = async (checkoutTokenId) => {
 		const { countries } = await commerce.services.localeListShippingCountries(checkoutTokenId);
-		console.log(countries)
+
 		setShippingCountries(countries);
 		setShippingCountry(Object.keys(countries)[0]);
 	}
 
+	const fetchSubdivisions = async (countryCode) => {
+		const { subdivisions } = await commerce.services.localeListSubdivisions(countryCode);
+
+		setShippingSubdivisions(subdivisions);
+		setShippingSubdivision(Object.keys(subdivisions)[0]);
+	}
 	useEffect(() => {
-		fetchShippingCountries(checkoutToken.id)
+		fetchShippingCountries(checkoutToken.id);
 	}, []);
+
+	useEffect(() => {
+		if (shippingCountry) fetchSubdivisions(shippingCountry);
+	}, [shippingCountry]);
 	return (
 		<>
 			<Typography variant="h6" gutterBottom>
@@ -61,14 +72,14 @@ const AddressForm = ({checkoutToken}) => {
 								))}
 							</Select>
 						</Grid>
-						{/*<Grid item xs={12} sm={6}>*/}
-						{/*	<InputLabel>Shipping Subdivision</InputLabel>*/}
-						{/*	<Select value={} fullWidth onChange={}>*/}
-						{/*		<MenuItem key={} value={}>*/}
-						{/*			Select me!*/}
-						{/*		</MenuItem>*/}
-						{/*	</Select>*/}
-						{/*</Grid>*/}
+						<Grid item xs={12} sm={6}>
+							<InputLabel>Shipping Subdivision</InputLabel>
+							<Select value={} fullWidth onChange={}>
+								<MenuItem key={} value={}>
+									Select me!
+								</MenuItem>
+							</Select>
+						</Grid>
 						{/*<Grid item xs={12} sm={6}>*/}
 						{/*	<InputLabel>Shipping Options</InputLabel>*/}
 						{/*	<Select value={} fullWidth onChange={}>*/}
